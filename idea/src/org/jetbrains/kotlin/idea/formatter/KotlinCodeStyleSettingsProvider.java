@@ -60,6 +60,13 @@ public class KotlinCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
                         addWrappingAndBracesTab(settings);
                         addBlankLinesTab(settings);
                         addTab(new ImportSettingsPanelWrapper(settings));
+
+                        for (CodeStyleSettingsProvider provider : CodeStyleSettingsProvider.EXTENSION_POINT_NAME.getExtensionList()) {
+                            if (provider.getLanguage() == KotlinLanguage.INSTANCE && !provider.hasSettingsPage()) {
+                                createTab(provider);
+                            }
+                        }
+
                         addTab(new KotlinSaveStylePanel(settings));
                     }
                 };
