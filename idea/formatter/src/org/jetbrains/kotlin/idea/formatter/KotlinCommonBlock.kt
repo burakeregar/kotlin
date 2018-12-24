@@ -694,8 +694,9 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Expression body")
         .within(KtNodeTypes.FUN)
+        .allowComment()
         .forElement {
-            it.psi is KtExpression && it.psi !is KtBlockExpression
+            (it.psi is KtExpression && it.psi !is KtBlockExpression)
         }
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true),
 
@@ -718,6 +719,7 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Property initializer")
         .within(KtNodeTypes.PROPERTY)
+        .allowComment()
         .forElement {
             it.psi is KtExpression
         }
@@ -725,6 +727,7 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Destructuring declaration")
         .within(KtNodeTypes.DESTRUCTURING_DECLARATION)
+        .allowComment()
         .forElement {
             it.psi is KtExpression
         }
