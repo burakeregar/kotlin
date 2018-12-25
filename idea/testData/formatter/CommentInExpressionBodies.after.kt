@@ -11,3 +11,7 @@ fun some() {
             // Some
             1 to 3
 }
+
+fun nice() =
+        /* Ha! */
+        2

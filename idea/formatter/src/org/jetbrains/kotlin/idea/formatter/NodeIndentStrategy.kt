@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.Indent
 import com.intellij.lang.ASTNode
-import com.intellij.psi.PsiComment
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
@@ -46,7 +45,6 @@ abstract class NodeIndentStrategy {
         private val forElement = ArrayList<IElementType>()
         private val notForElement = ArrayList<IElementType>()
         private var forElementCallback: ((ASTNode) -> Boolean)? = null
-        private var allowComment = false
 
         override fun toString(): String {
             return "PositionStrategy " + (debugInfo ?: "No debug info")
@@ -114,28 +112,18 @@ abstract class NodeIndentStrategy {
             return this
         }
 
-        fun allowComment(): PositionStrategy {
-            allowComment = true
-            return this
-        }
-
         override fun getIndent(node: ASTNode, settings: CodeStyleSettings): Indent? {
-            val isOnAllowedComment = allowComment && node.psi is PsiComment
-
-            if (!isOnAllowedComment) {
-                if (!forElement.isEmpty()) {
-                    if (!forElement.contains(node.elementType)) {
-                        return null
-                    }
-                }
-
-                if (notForElement.contains(node.elementType)) {
+            if (!forElement.isEmpty()) {
+                if (!forElement.contains(node.elementType)) {
                     return null
                 }
+            }
+            if (notForElement.contains(node.elementType)) {
+                return null
+            }
 
-                if (forElementCallback?.invoke(node) == false) {
-                    return null
-                }
+            if (forElementCallback?.invoke(node) == false) {
+                return null
             }
 
             val parent = node.treeParent
